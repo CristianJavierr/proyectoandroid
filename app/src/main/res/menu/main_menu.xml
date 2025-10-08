@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_more"
+        android:title="Más"
+        android:icon="@drawable/ic_more_horiz"
+        app:showAsAction="always"
+        android:orderInCategory="1">
+        <menu>
+            <item
+                android:id="@+id/action_logout"
+                android:title="Cerrar Sesión"
+                android:icon="@android:drawable/ic_lock_power_off" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_add"
+        android:title="Agregar"
+        app:showAsAction="always"
+        app:actionLayout="@layout/action_button_add"
+        android:orderInCategory="2" />
+</menu>

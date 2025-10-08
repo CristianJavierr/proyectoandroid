@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <!-- Título con gradiente -->
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Iniciar Sesión"
+            android:textSize="32sp"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="0"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Campo de Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:hint="Correo Electrónico"
+            android:textColorHint="#999999"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:hintTextColor="#666666"
+            app:hintAnimationEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                style="@style/EditTextBlackCursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:textColor="#000000"
+                android:textColorHighlight="#CCCCCC"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:background="@drawable/bg_input_field"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="12dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Campo de Contraseña -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/passwordInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Contraseña"
+            android:textColorHint="#999999"
+            app:boxStrokeWidth="0dp"
+            app:boxStrokeWidthFocused="0dp"
+            app:boxBackgroundMode="filled"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:hintTextColor="#666666"
+            app:hintAnimationEnabled="true"
+            app:endIconMode="password_toggle"
+            app:endIconTint="#666666">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/passwordEditText"
+                style="@style/EditTextBlackCursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:textColor="#000000"
+                android:textColorHighlight="#CCCCCC"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:background="@drawable/bg_input_field"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="12dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón de Login - Negro y Redondeado -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:text="CONTINUAR"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.1"
+            app:backgroundTint="#000000"
+            app:cornerRadius="30dp"
+            android:elevation="0dp" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:indeterminateTint="#000000"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- Enlace a Registro -->
+        <LinearLayout
+            android:id="@+id/registerLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="28dp"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿Nuevo aquí? "
+                android:textSize="14sp"
+                android:textColor="#999999"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/registerTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Crear Cuenta"
+                android:textSize="14sp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-medium"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

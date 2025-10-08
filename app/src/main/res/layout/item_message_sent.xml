@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mensaje enviado por el usuario actual (alineado a la derecha) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="end"
+    android:padding="4dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="64dp"
+        android:maxWidth="260dp">
+
+        <!-- Burbuja del mensaje -->
+        <TextView
+            android:id="@+id/messageTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Este es un mensaje enviado"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_message_sent"
+            android:padding="12dp"/>
+
+        <!-- Hora del mensaje -->
+        <TextView
+            android:id="@+id/timeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10:30 AM"
+            android:textSize="11sp"
+            android:textColor="#999999"
+            android:layout_gravity="end"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"/>
+
+    </LinearLayout>
+
+</LinearLayout>
