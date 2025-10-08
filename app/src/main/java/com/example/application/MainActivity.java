@@ -87,20 +87,22 @@ public class MainActivity extends AppCompatActivity {
     }
     
     @Override
-    protected void onPause() {
-        super.onPause();
-        // Detener heartbeat cuando salimos de la app
+    protected void onStop() {
+        super.onStop();
+        // Detener heartbeat solo cuando la Activity ya no es visible
         stopHeartbeat();
-        Log.d("MainActivity", "onPause - Heartbeat detenido");
+        setUserOffline();
+        Log.d("MainActivity", "onStop - Heartbeat detenido y usuario offline");
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Detener heartbeat y marcar como offline
+        // Limpiar recursos y asegurar que heartbeat esté detenido
         stopHeartbeat();
-        setUserOffline();
-        Log.d("MainActivity", "onDestroy - Usuario marcado como OFFLINE");
+        heartbeatHandler = null;
+        heartbeatRunnable = null;
+        Log.d("MainActivity", "onDestroy - Recursos limpiados");
     }
     
     private void startHeartbeat() {
@@ -130,6 +132,13 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void updateHeartbeat() {
+        // Verificar que la Activity aún está activa
+        if (isFinishing() || isDestroyed()) {
+            Log.d("MainActivity", "Activity finalizando, cancelando heartbeat");
+            stopHeartbeat();
+            return;
+        }
+        
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -144,11 +153,13 @@ public class MainActivity extends AppCompatActivity {
                     .update(heartbeatData)
                     .addOnFailureListener(e -> {
                         // Si falla update, intentar con set+merge
-                        db.collection("users")
-                                .document(userId)
-                                .set(heartbeatData, com.google.firebase.firestore.SetOptions.merge())
-                                .addOnFailureListener(e2 -> 
-                                    Log.e("MainActivity", "❌ Error en heartbeat", e2));
+                        if (!isFinishing() && !isDestroyed()) {
+                            db.collection("users")
+                                    .document(userId)
+                                    .set(heartbeatData, com.google.firebase.firestore.SetOptions.merge())
+                                    .addOnFailureListener(e2 -> 
+                                        Log.e("MainActivity", "❌ Error en heartbeat", e2));
+                        }
                     });
         }
     }

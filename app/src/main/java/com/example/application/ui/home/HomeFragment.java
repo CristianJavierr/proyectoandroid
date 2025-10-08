@@ -137,19 +137,25 @@ public class HomeFragment extends Fragment {
                     
                     // Verificar que no sea el mismo usuario
                     if (otherUserId.equals(currentUserId)) {
-                        Toast.makeText(requireContext(), "No puedes crear un chat contigo mismo", Toast.LENGTH_SHORT).show();
+                        if (isAdded() && getContext() != null) {
+                            Toast.makeText(requireContext(), "No puedes crear un chat contigo mismo", Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
 
                     // Crear o buscar chat existente
                     createOrGetChat(currentUserId, otherUserId, otherUserName);
                 } else {
-                    Toast.makeText(requireContext(), "Usuario no encontrado. Email buscado: " + normalizedEmail, Toast.LENGTH_LONG).show();
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(requireContext(), "Usuario no encontrado. Email buscado: " + normalizedEmail, Toast.LENGTH_LONG).show();
+                    }
                 }
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e("HomeFragment", "Error al buscar: " + e.getMessage(), e);
-                Toast.makeText(requireContext(), "Error al buscar usuario: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(requireContext(), "Error al buscar usuario: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             });
     }
 
@@ -159,6 +165,11 @@ public class HomeFragment extends Fragment {
             .whereArrayContains("participants", currentUserId)
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
+                // Verificar que el fragment sigue activo
+                if (!isAdded() || getContext() == null) {
+                    return;
+                }
+                
                 String chatId = null;
                 for (com.google.firebase.firestore.QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     java.util.List<String> participants = (java.util.List<String>) doc.get("participants");
@@ -189,21 +200,40 @@ public class HomeFragment extends Fragment {
         db.collection("chats")
             .add(chat)
             .addOnSuccessListener(documentReference -> {
+                // Verificar que el fragment sigue activo
+                if (!isAdded() || getContext() == null) {
+                    return;
+                }
                 Toast.makeText(requireContext(), "Chat con " + otherUserName + " creado", Toast.LENGTH_SHORT).show();
                 loadChats();
             })
             .addOnFailureListener(e -> {
+                // Verificar que el fragment sigue activo
+                if (!isAdded() || getContext() == null) {
+                    return;
+                }
                 Toast.makeText(requireContext(), "Error al crear chat: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
     }
 
     private void loadChats() {
+        // Verificar que el fragment aún está activo
+        if (!isAdded() || getContext() == null) {
+            Log.d("HomeFragment", "Fragment no está activo, cancelando loadChats");
+            return;
+        }
+        
         String currentUserId = mAuth.getCurrentUser().getUid();
         
         db.collection("chats")
             .whereArrayContains("participants", currentUserId)
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
+                // Verificar que el fragment sigue activo
+                if (!isAdded() || getContext() == null || binding == null) {
+                    return;
+                }
+                
                 if (queryDocumentSnapshots != null && !queryDocumentSnapshots.isEmpty()) {
                     List<Chat> chatList = new ArrayList<>();
                     int[] pendingTasks = {queryDocumentSnapshots.size()};
@@ -232,6 +262,11 @@ public class HomeFragment extends Fragment {
                         db.collection("users").document(otherUserId)
                             .get()
                             .addOnSuccessListener(userDoc -> {
+                                // Verificar que el fragment sigue activo
+                                if (!isAdded() || getContext() == null || binding == null) {
+                                    return;
+                                }
+                                
                                 if (userDoc.exists()) {
                                     chat.setOtherUserName(userDoc.getString("name"));
                                     chat.setOtherUserEmail(userDoc.getString("email"));
@@ -249,6 +284,11 @@ public class HomeFragment extends Fragment {
                                     .whereEqualTo("read", false)
                                     .get()
                                     .addOnSuccessListener(messagesSnapshot -> {
+                                        // Verificar que el fragment sigue activo antes de actualizar UI
+                                        if (!isAdded() || getContext() == null || binding == null) {
+                                            return;
+                                        }
+                                        
                                         chat.setUnreadCount(messagesSnapshot.size());
                                         
                                         chatList.add(chat);
@@ -267,6 +307,11 @@ public class HomeFragment extends Fragment {
                                         }
                                     })
                                     .addOnFailureListener(e -> {
+                                        // Verificar que el fragment sigue activo
+                                        if (!isAdded() || getContext() == null || binding == null) {
+                                            return;
+                                        }
+                                        
                                         chat.setUnreadCount(0);
                                         chatList.add(chat);
                                         pendingTasks[0]--;
@@ -284,6 +329,11 @@ public class HomeFragment extends Fragment {
                                     });
                             })
                             .addOnFailureListener(e -> {
+                                // Verificar que el fragment sigue activo
+                                if (!isAdded() || getContext() == null || binding == null) {
+                                    return;
+                                }
+                                
                                 // Si falla cargar usuario, usar valores por defecto
                                 chat.setOtherUserName("Usuario");
                                 chat.setOtherUserEmail("");
@@ -306,23 +356,46 @@ public class HomeFragment extends Fragment {
                             });
                     }
                 } else {
-                    // No hay chats
-                    chatAdapter.updateChats(new ArrayList<>());
-                    binding.emptyTextView.setVisibility(View.VISIBLE);
+                    // No hay chats - verificar fragment activo antes de actualizar UI
+                    if (isAdded() && getContext() != null && binding != null) {
+                        chatAdapter.updateChats(new ArrayList<>());
+                        binding.emptyTextView.setVisibility(View.VISIBLE);
+                    }
                 }
             })
             .addOnFailureListener(e -> {
+                // Verificar que el fragment sigue activo
+                if (!isAdded() || getContext() == null || binding == null) {
+                    return;
+                }
                 Toast.makeText(requireContext(), "Error al cargar chats", Toast.LENGTH_SHORT).show();
             });
     }
     
     private void startAutoRefresh() {
-        handler = new android.os.Handler();
+        // Verificar que el fragment está activo antes de iniciar
+        if (!isAdded() || getContext() == null) {
+            Log.d("HomeFragment", "Fragment no activo, no se inicia auto-refresh");
+            return;
+        }
+        
+        if (handler == null) {
+            handler = new android.os.Handler();
+        }
+        
+        // Detener cualquier refresh existente
+        stopAutoRefresh();
+        
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                loadChats();
-                handler.postDelayed(this, REFRESH_INTERVAL);
+                // Verificar que el fragment sigue activo antes de cada refresh
+                if (isAdded() && getContext() != null && binding != null) {
+                    loadChats();
+                    handler.postDelayed(this, REFRESH_INTERVAL);
+                } else {
+                    Log.d("HomeFragment", "Fragment inactivo, deteniendo auto-refresh");
+                }
             }
         };
         handler.post(refreshRunnable);
